@@ -1,4 +1,4 @@
-name maze.app
+name mazgam.app
 longname "Maze Runner"
 type    appl, process, single
 class   MazeProcessClass
