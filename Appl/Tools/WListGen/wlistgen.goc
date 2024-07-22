@@ -37,8 +37,23 @@ Boolean g_compress;
 Boolean g_umlaut;
 int	g_charSet;
 
+#define INITIAL_SIZE	25
+
+byte *maze;	/* a fixed buffer of MAZE_BUFFER_SIZE bytes */
+word size_x = (INITIAL_SIZE*2)-1 ;
+word size_y = (INITIAL_SIZE*2)-1 ;
+word pos_start = 0 ;
+word draw_mode = 0 ;
+sword pos_x = 1000 ;
+sword pos_y = 1000 ;
+byte game_mode = 0 ;
 void PrintMessage(char *txt);
 
+
+void TestR(char *maze, int size_x) {
+maze = 0;
+size_x = size_x;
+}
 
 /*###########################################################################
 	 CODE for Word List Creator
@@ -52,6 +67,8 @@ void PrintMessage(char *txt);
  *	Return:
  ---------------------------------------------------------------------------*/
 void PrintMessage(char *txt) {
+int t;
+t = g_umlaut;
     @call WListMessageText::MSG_VIS_TEXT_APPEND_PTR(txt,0);
 }    
 

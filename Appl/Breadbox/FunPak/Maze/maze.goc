@@ -1468,6 +1468,7 @@ void MazePlaySound(MemHandle soundHandle)
 }
 
 /*-------------------------------------------------------------------------*/
+// swat: stop in MazeProcessGEN_PROCESS_OPEN_APPLICATION 
 @method MazeProcessClass, MSG_GEN_PROCESS_OPEN_APPLICATION
 {
  FileHandle fhandle ;
