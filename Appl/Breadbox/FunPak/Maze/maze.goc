@@ -976,10 +976,10 @@ void MazeDraw2(GStateHandle gstate,
 
 
 
-word MyRandom(void) ;
+word MyRandom(int size_x) ;
 //void show(byte* maze, word size_x, word size_y) ;
 
-word MyRandom()
+word MyRandom(int size_x)
 {
     static word rand1 = 0xf32d ;
     static word rand2 = 0x0103 ;
@@ -1032,8 +1032,8 @@ void MazeMake(byte* maze, word size_x, word size_y)
             maze[quick_maze(size_x-1, pos_y)] = MAZE_BIT_TWICE ;
     }
 
-    pos_x = 1 + ((MyRandom() % (size_x-2)) & 0xFFFE) ;
-    pos_y = 1 + ((MyRandom() % (size_y-2)) & 0xFFFE) ;
+    pos_x = 1 + ((MyRandom(0) % (size_x-2)) & 0xFFFE) ;
+    pos_y = 1 + ((MyRandom(0) % (size_y-2)) & 0xFFFE) ;
 
     pos = quick_maze(pos_x, pos_y) ;
 
@@ -1047,7 +1047,7 @@ void MazeMake(byte* maze, word size_x, word size_y)
            break ;
 
         do {
-            dir_try = (MyRandom() >> 2) % 5;
+            dir_try = (MyRandom(1) >> 2) % 5;
         } while (dir_try>3) ;
         double_step = (dir_step = dirs[dir_try])<<1 ;
 
@@ -1062,7 +1062,7 @@ void MazeMake(byte* maze, word size_x, word size_y)
         }
 
         if (count==4)  {
-            dir_try = MyRandom() & 3 ;
+            dir_try = MyRandom(2) & 3 ;
             dir_step = dirs[dir_try] ;
 
             count = 0 ;
@@ -1088,11 +1088,11 @@ void MazeMake(byte* maze, word size_x, word size_y)
     } while (count != 4) ;
     maze[pos] = MAZE_BIT_ONCE|MAZE_BIT_TWICE ;
 
-    pos_start = pos_y = 1 + ((MyRandom() % (size_y-2)) & 0xFFFE) ;
+    pos_start = pos_y = 1 + ((MyRandom(3) % (size_y-2)) & 0xFFFE) ;
     pos = quick_maze(0, pos_y) ;
     maze[pos] = MAZE_BIT_ONCE|MAZE_BIT_TWICE ;
 
-    pos_y = 1 + ((MyRandom() % (size_y-2)) & 0xFFFE) ;
+    pos_y = 1 + ((MyRandom(4) % (size_y-2)) & 0xFFFE) ;
     pos = quick_maze(size_x-1, pos_y) ;
     maze[pos] = MAZE_BIT_ONCE|MAZE_BIT_TWICE ;
 

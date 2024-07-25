@@ -36,6 +36,7 @@
 Boolean g_compress;
 Boolean g_umlaut;
 int	g_charSet;
+word word2;
 
 #define INITIAL_SIZE	25
 

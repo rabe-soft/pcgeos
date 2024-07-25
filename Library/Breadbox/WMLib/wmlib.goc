@@ -22,6 +22,12 @@
 @include <Ansi/stdio.h>
 @include "wmlib.h"
 
+int g_test1 = 12;
+static word g_test2 = 24;
+word index;	// <-- parameter existiert
+MemHandle mem;	// <<- lokale Var existert
+
+
 VMBlockHandle near WMI_CreateLib(
                       VMFileHandle file) ;
 
