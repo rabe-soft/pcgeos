@@ -108,7 +108,7 @@ prefLibs	: prefvid prefts preftd \
 
 # Geos impex libraries
 impex_libs	: dib bmp clp ico pcx tif \
-		  dbase3 dbase4 htmlpars htmlimpx
+		  dbase3 dbase4 htmlimpx vcimpex
 #lot123 msmword msword wordperf5
 
 
@@ -129,7 +129,7 @@ minimalAppl	: minimalGame minimalUtils minimalTools minimalSavers \
 		  bbxchat bbxmail \
 		  newsread geozip sclock trayapps\
  	  	  hmbase pdfvu  bnkr30 ftpc \
- 	  	  instc instf foldered
+ 	  	  instc instf foldered grafcalc
 
 minimalUtils	: prefmgr
 
@@ -137,7 +137,7 @@ minimalTools    : resedit wlgen
 
 minimalGame	: solitaire cword amateur bjack hearts gwpoker \
                   pyramid sokoban uki mine column battle \
-                  row4 munchers vacman snake frcell
+                  row4 munchers vacman snake frcell ladder
 
 extraGame	: taipei column2 mine2 follow treas mazerun \
 		  blkbox hiho magicboard  scode noid paddle \
@@ -155,7 +155,7 @@ minimalTools	: prntscrn
 
 otherEnsemble	: conview reader term tedit geofile dirls  \
 		  graphvwr macror dump perf bim ffind bbxcd webbox \
-		  hinv10 bbg10
+		  hinv10 bbg10 vconvert
 #geocon3
 
 #
@@ -305,11 +305,8 @@ Installed/Library/Trans/Text/Ascii: 	ui text MAKELIB
 msword	: Installed/Library/Trans/Text/MicrosoftWord
 Installed/Library/Trans/Text/MicrosoftWord: 	ui ansic impex msmfile MAKELIB
 
-htmlpars : Installed/Library/Breadbox/HtmlPars
-Installed/Library/Breadbox/HtmlPars: kernel ansic text MAKELIB
-
 htmlimpx : Installed/Library/Trans/Web/HtmlImpx
-Installed/Library/Trans/Web/HtmlImpx: htmlpars ansic text impex ui MAKELIB
+Installed/Library/Trans/Web/HtmlImpx: html4par ansic text impex ui MAKELIB
 
 sstor	: Installed/Library/Breadbox/SStor
 Installed/Library/Breadbox/SStor: 	kernel ansic MAKELIB
@@ -960,6 +957,9 @@ Installed/Library/FMTools/OpenWith:	ui ansic MAKEAPPL
 foldered: Installed/Library/FMTools/FolderEd
 Installed/Library/FMTools/FolderEd:	ui ansic MAKEAPPL
 
+grafcalc: Installed/Appl/GrafCalc
+Installed/Appl/GrafCalc:	ui ansic cell parse color math MAKEAPPL
+
 homebase:
 #	No need to do this because this is sync'ed by morning make script.
 #	p4 sync -f //depot/pcgeos/Appl/Breadbox/Homebase/...
@@ -1029,6 +1029,9 @@ Installed/Appl/Games/Taipei:	ui game MAKEAPPL
 
 uki	: Installed/Appl/Games/Uki
 Installed/Appl/Games/Uki:	ui sound text MAKEAPPL
+
+ladder	: Installed/Appl/Games/GeoLadder
+Installed/Appl/Games/GeoLadder:	ui sound ansic math MAKEAPPL
 
 column2	: Installed/Appl/Breadbox/Column
 Installed/Appl/Breadbox/Column:	ui game MAKEAPPL
@@ -1378,10 +1381,6 @@ Installed/Appl/Breadbox/BbxBrow:	ui ansic text spool \
 
 # webmagick libs
 
-#html3par	: ui ansic text extgraph
-#	mdcd %ROOT_DIR%\Installed\Library\Breadbox\html3par
-#	$(MAKE) -I$(ROOT_DIR)\Library\Breadbox\html3par lib full
-
 html4par	: Installed/Library/Breadbox/Html4Par
 Installed/Library/Breadbox/Html4Par:	kernel ui ansic text extgraph MAKELIB
 
@@ -1419,15 +1418,13 @@ Installed/Library/SSL:				ansic socket mapheap hostif MAKELIB
 
 # product-specific dependency on fjpeg
 impgraph	: Installed/Library/Breadbox/ImpGraph
-Installed/Library/Breadbox/ImpGraph:		ansic ijgjpeg MAKELIB #fjpeg
+Installed/Library/Breadbox/ImpGraph:		ansic ijgjpeg fjpeg MAKELIB
 
 ijgjpeg	: 	Installed/Library/Breadbox/Ijgjpeg
 Installed/Library/Breadbox/Ijgjpeg:		ui ansic MAKELIB
 
-#fjpeg	: 	Installed/Library/Breadbox/fjpeg
-#Installed/Library/Breadbox/fjpeg:		ui ansic MAKELIB
-#	mdcd %ROOT_DIR%\
-#	$(MAKE) -I$(ROOT_DIR)\Library\Breadbox\fjpeg lib full
+fjpeg	: 	Installed/Library/Breadbox/Fjpeg
+Installed/Library/Breadbox/Fjpeg:		ui ansic MAKELIB
 
 impdoc	: 	Installed/Library/Breadbox/ImpDoc
 Installed/Library/Breadbox/ImpDoc:		ui ansic MAKELIB
@@ -1811,3 +1808,14 @@ Installed/Appl/Tools/Localize:		ui text spool MAKEAPPL
 
 wlgen	: Installed/Appl/Tools/WListGen
 Installed/Appl/Tools/WListGen:			ui ansic wmlib MAKEAPPL
+
+# Vector graphics import/export
+
+meta    : Installed/Library/Breadbox/Meta
+Installed/Library/Breadbox/Meta:		ui ansic grobj math MAKELIB
+
+vcimpex : Installed/Library/Breadbox/Impex/VCImpex
+Installed/Library/Breadbox/Impex/VCImpex:	ui impex ansic math meta MAKELIB
+
+vconvert: Installed/Appl/Breadbox/VConvert
+Installed/Appl/Breadbox/VConvert:		ui ansic grobj text math meta MAKEAPPL

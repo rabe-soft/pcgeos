@@ -66,7 +66,7 @@ extern TEngine_Instance engineInstance;
 #define FAMILY_NAME_LENGTH                  20
 #define STYLE_NAME_LENGTH                   16
 
-#define KERN_VALUE_DIVIDENT                 100
+#define KERN_VALUE_DIVIDENT                 30
 
 #define STANDARD_GRIDSIZE                   1000
 #define MAX_NUM_GLYPHS                      2000
@@ -394,12 +394,12 @@ typedef struct
     TT_CharMap                  charMap;
     TT_Outline                  outline;
 
+    /* lookuptable for truetype indices */
+    MemHandle                   lookupTable;
+
     /* currently open face */
     FileHandle                  ttfile;
     TrueTypeOutlineEntry        entry;
-
-    /* lookuptable for truetype indices */
-    MemHandle                   lookupTable;
 } TrueTypeVars;
 
 
@@ -440,6 +440,11 @@ typedef enum {
  *      macros
  ***********************************************************************/
 
+#define GrMulWWFixed    TrueType_GrMulWWFixed
+
+extern WWFixedAsDWord
+		    _pascal TrueType_GrMulWWFixed(WWFixedAsDWord i,
+							WWFixedAsDWord j);
 /*
  * convert value (word) to WWFixedAsDWord
  */
@@ -506,6 +511,7 @@ typedef enum {
 
 #define MUL_100_WWFIXED( factor, percentage )   \
         GrMulWWFixed( factor, GrUDivWWFixed( ((long)percentage ) << 16, 100L << 16))
+
 
 /***********************************************************************
  *      functions

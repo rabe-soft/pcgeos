@@ -61,7 +61,7 @@ void InitConvertHeader(         TRUETYPE_VARS, FontHeader* fontHeader );
 
 static char GetDefaultChar(     TRUETYPE_VARS, char firstChar );
 
-static word GetKernCount(       TRUETYPE_VARS );
+word GetKernCount(       TRUETYPE_VARS );
 
 static word toHash( const char* str );
 
@@ -72,6 +72,8 @@ static char* strcpy( char* dest, const char* source );
 static void strcpyname( char* dest, const char* source );
 
 static int strcmp( const char* s1, const char* s2 );
+
+static Boolean activateBytecodeInterpreter();
 
 
 /********************************************************************
@@ -105,6 +107,8 @@ TT_Error _pascal Init_FreeType()
         error = TT_Init_FreeType();
         if ( error != TT_Err_Ok )
                 return error;
+
+        engineInstance.interpreterActive = activateBytecodeInterpreter();
 
         return TT_Err_Ok;
 }
@@ -943,7 +947,7 @@ static word getNameFromNameTable( TRUETYPE_VARS, char* name, const TT_UShort nam
  *      ----      ----      -----------
  *      21.01.23  JK        Initial Revision
  *******************************************************************/
-
+#pragma code_seg(ttcharmapper_TEXT)
 void InitConvertHeader( TRUETYPE_VARS, FontHeader* fontHeader )
 {
         TT_UShort  charIndex;
@@ -1042,7 +1046,7 @@ EC(     ECCheckBounds( (void*)fontHeader ) );
 
         fontHeader->FH_initialized = TRUE;
 }
-
+#pragma code_seg()
 
 /********************************************************************
  *                      GetDefaultChar
@@ -1083,6 +1087,43 @@ static char GetDefaultChar( TRUETYPE_VARS, char firstChar )
 
 
 /********************************************************************
+ *                      activateBytecodeInterpreter
+ ********************************************************************
+ * SYNOPSIS:       Activates or determines if the bytecode interpreter 
+ *                 should be active for the TrueType font driver. Reads 
+ *                 the configuration setting from geos.ini.
+ * 
+ * PARAMETERS:     None
+ * 
+ * RETURNS:        Boolean
+ *                    TRUE if the bytecode interpreter should be active 
+ *                    (default behavior) or the value retrieved from the 
+ *                    initialization file if it is successfully read.
+ * 
+ * STRATEGY:       - Attempt to read the BYTECODEINTERPRETER_KEY from the 
+ *                   initialization file under the TTFDRIVER_CATEGORY.
+ *                 - If the key is successfully read, return the retrieved value.
+ *                 - If reading fails, return TRUE as the default behavior.
+ * 
+ * REVISION HISTORY:
+ *      Date      Name      Description
+ *      ----      ----      -----------
+ *      17.11.24  jk        Initial Revision
+ *******************************************************************/
+
+static Boolean activateBytecodeInterpreter()
+{
+        Boolean  bytecodeInterpreterActive;
+
+
+        if( !InitFileReadBoolean( TTFDRIVER_CATEGORY, BYTECODEINTERPRETER_KEY, &bytecodeInterpreterActive ) )
+                return bytecodeInterpreterActive;
+
+        return TRUE;
+}
+
+
+/********************************************************************
  *                      GetKernCount
  ********************************************************************
  * SYNOPSIS:       Retrieves the number of valid kerning pairs for the 
@@ -1112,8 +1153,8 @@ static char GetDefaultChar( TRUETYPE_VARS, char firstChar )
  *      ----      ----      -----------
  *      11/08/23  JK        Initial Revision
  *******************************************************************/
-
-static word GetKernCount( TRUETYPE_VARS )
+#pragma code_seg(ttcharmapper_TEXT)
+word GetKernCount( TRUETYPE_VARS )
 {
         TT_Kerning        kerningDir;
         word              table;
@@ -1162,7 +1203,7 @@ EC(     ECCheckBounds( indices ) );
 
         return numGeosKernPairs;
 }
-
+#pragma code_seg()
 
 /*******************************************************************/
 /* We cannot use functions from the Ansic library, which causes a  */
