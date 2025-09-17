@@ -56,19 +56,14 @@ REVISION HISTORY:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@
 
 TrueTypeCharMetrics	proc	far
-	uses	cx, si, ds
-
-resultDXAX	local	dword
-
-	push	bx, di
-	mov	di, FONT_C_CODE_STACK_SPACE
-	call	ThreadBorrowStackSpace
-	push	di
+	uses	bx, si, ds, di
 
 	.enter
 
+	push    dx		; save character
+
 	mov	di, FONT_C_CODE_STACK_SPACE
-	call 	ThreadBorrowStackSpace
+	call	ThreadBorrowStackSpace
 	push	di
 
 	mov	si, cx
@@ -97,37 +92,29 @@ resultDXAX	local	dword
 	mov	cl, es:GS_fontAttr.FCA_width
 	push	cx		; pass width
 	mov	cl, es:GS_fontAttr.FCA_weight
-	push	cx		; pass wieght
-
-	push 	ss		; pass ptr to result dword in ss
-	lea	cx, resultDXAX
-	push	cx
+	push	cx		; pass weight
 
 	segmov	ds, dgroup, cx
 	push	ds:variableHandle
 	call	TRUETYPE_CHAR_METRICS
 
-	mov	ax, {word} resultDXAX
-	mov	dx, {word} resultDXAX+2
-
 	test 	si, GCMI_ROUNDED
 	jnz	roundToInt
 	rndwwbf dxax
 
-	pop	di
-	call 	ThreadReturnStackSpace
 done:
-	clc
-	.leave
-
 	pop	di
 	call	ThreadReturnStackSpace	; (preserves flags)
-	pop	bx, di
-	
+
+	pop	bx
+	mov 	al, bl
+
+	clc
+	.leave
 	ret
 
 roundToInt:
 	rndwwf 	dxax
-	jmp		done
+	jmp	done
 
 TrueTypeCharMetrics	endp

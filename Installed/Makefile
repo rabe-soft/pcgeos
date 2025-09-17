@@ -88,7 +88,7 @@ Installed/Tools/swat/Stub/WinCom:	MAKESTUB
 #
 minimalLibrary	: kernel swap sound net ui isui motif spool text mailbox \
 		  genpc ansic cdaudio cell chart color compress config hash impex \
-		  borlandc math pen resolver spline ssmeta styles \
+		  borlandc watcomc math pen resolver spline ssmeta styles \
 		  wav game cards spreadsheet parse spell convert \
 		  saver prefLibs accpnt netutils \
 		  socket dhcp borlandrtl ffile streamc mailhub mailsmtp \
@@ -97,8 +97,8 @@ minimalLibrary	: kernel swap sound net ui isui motif spool text mailbox \
 		  jpeg giflib gif htmlimpx n2txt inetmsg extui \
 		  winword8 zlib dirlist minizip idialc eps impex_libs \
 		  thumbdb ftplib flllib sitelist int8087 intx87\
-		  basicdb gridlib gsol treplib hostif
-#ascii
+		  basicdb gridlib gsol treplib hostif ascii \
+		  rsftool bmptools
 
 prefLibs	: prefvid prefts preftd \
 		  prefsnd prefos prefmous preflo preflf prefkbd \
@@ -123,13 +123,15 @@ minimalAppl	: minimalGame minimalUtils minimalTools minimalSavers \
  	  	  extraGame \
 		  minimalEdu calendar geodex geocalc geodraw geowrite \
 		  scrapbk clock bigcalc geopoint \
-		  email manager isdesk linktool openwith setup \
+		  email manager isdesk \
+		  linktool openwith foldered cvttool \
+		  setup \
 		  launcher webmagick idialup \
 		  charm wordmat banner \
 		  bbxchat bbxmail \
 		  newsread geozip sclock trayapps\
- 	  	  hmbase pdfvu  bnkr30 ftpc \
- 	  	  instc instf foldered grafcalc
+ 	  	  hmbase pdfvu bnkr30 ftpc \
+ 	  	  instc instf grafcalc
 
 minimalUtils	: prefmgr
 
@@ -254,7 +256,7 @@ shell	: Installed/Library/Shell
 Installed/Library/Shell: 	ui MAKELIB
 
 ansic	: Installed/Library/AnsiC
-Installed/Library/AnsiC: kernel math borlandc MAKELIB
+Installed/Library/AnsiC: kernel math borlandc watcomc MAKELIB
 
 cell	: Installed/Library/Cell
 Installed/Library/Cell: 	kernel MAKELIB
@@ -271,6 +273,9 @@ Installed/Library/GrObj:	ui text bitmap ruler spline color \
 
 hash	: Installed/Library/Hash
 Installed/Library/Hash:	kernel MAKELIB
+
+pnglib	: Installed/Library/PngLib
+Installed/Library/PngLib:	ansic zlib MAKELIB
 
 impex	: Installed/Library/Impex
 Installed/Library/Impex: 	ui MAKELIB
@@ -323,6 +328,9 @@ borlandrtl	:
 
 borlandc	: Installed/Library/Math/Compiler/BorlandC
 Installed/Library/Math/Compiler/BorlandC: kernel math MAKELIB
+
+watcomc	: Installed/Library/Math/Compiler/WatcomC
+Installed/Library/Math/Compiler/WatcomC: kernel math MAKELIB
 
 math	: Installed/Library/Math
 Installed/Library/Math:	ui MAKELIB
@@ -932,7 +940,7 @@ Installed/Appl/Clock:		ui color MAKEAPPL
 # email: ui text ansic socket spell spool mailtool stacache borlandc
 #
 
-email: ui text ansic socket spell spool  borlandc
+email: ui text ansic socket spell spool  borlandc watcomc
 #	No need to do this because this is sync'ed by morning make script.
 #	p4 sync -f //depot/pcgeos/Installed/Appl/Email/...
 
@@ -956,6 +964,9 @@ Installed/Library/FMTools/OpenWith:	ui ansic MAKEAPPL
 
 foldered: Installed/Library/FMTools/FolderEd
 Installed/Library/FMTools/FolderEd:	ui ansic MAKEAPPL
+
+cvttool: Installed/Library/FMTools/CvtTool
+Installed/Library/FMTools/CvtTool:	ui convert MAKELIB
 
 grafcalc: Installed/Appl/GrafCalc
 Installed/Appl/GrafCalc:	ui ansic cell parse color math MAKEAPPL
@@ -1359,7 +1370,7 @@ Installed/Appl/Breadbox/BbxBrow:	ui ansic text spool \
 					impgraph impdoc \
 					modem \
 					ibms parentc wav mailhub socket \
-					js netutils cookies idialc \
+					netutils cookies idialc \
 					ppp  tcpip hsttcpip MAKEAPPL
 
 # sorry, executing CLEAN in the global makefile is not only bad style, it forces
@@ -1386,9 +1397,6 @@ Installed/Library/Breadbox/Html4Par:	kernel ui ansic text extgraph MAKELIB
 
 profpnt		: Installed/Library/ProfPnt
 Installed/Library/ProfPnt:		ansic MAKELIB
-
-js              : Installed/Library/JS
-Installed/Library/JS:		ansic math borlandc mapheap profpnt MAKELIB
 
 ibms    : Installed/Library/Breadbox/Ibms
 Installed/Library/Breadbox/Ibms:	ansic MAKELIB
@@ -1418,7 +1426,7 @@ Installed/Library/SSL:				ansic socket mapheap hostif MAKELIB
 
 # product-specific dependency on fjpeg
 impgraph	: Installed/Library/Breadbox/ImpGraph
-Installed/Library/Breadbox/ImpGraph:		ansic ijgjpeg fjpeg MAKELIB
+Installed/Library/Breadbox/ImpGraph:		ansic ijgjpeg pnglib fjpeg MAKELIB
 
 ijgjpeg	: 	Installed/Library/Breadbox/Ijgjpeg
 Installed/Library/Breadbox/Ijgjpeg:		ui ansic MAKELIB
@@ -1430,7 +1438,7 @@ impdoc	: 	Installed/Library/Breadbox/ImpDoc
 Installed/Library/Breadbox/ImpDoc:		ui ansic MAKELIB
 
 pdfvu	: 	Installed/Appl/PDFViewer
-Installed/Appl/PDFViewer:			ui ansic spool borlandc \
+Installed/Appl/PDFViewer:			ui ansic spool borlandc watcomc \
 						MAKEAPPL
 
 #wavplay	: Installed/Appl/WavPlay
@@ -1560,7 +1568,7 @@ Installed/Appl/Breadbox/BBGrmt:			ui ansic spool text MAKEAPPL
 #Installed/Appl/Breadbox/Geocon3:		ui ansic color MAKEAPPL
 
 graphvwr : Installed/Appl/Breadbox/Graphvwr
-Installed/Appl/Breadbox/Graphvwr:	ui ansic extui giflib thumbdb ijgjpeg \
+Installed/Appl/Breadbox/Graphvwr:	ui ansic extui giflib thumbdb ijgjpeg pnglib \
 					MAKEAPPL
 
 macror	: Installed/Appl/Breadbox/MacroR
@@ -1658,7 +1666,7 @@ ndorest:  regis run legos 	\
 	  irlap loopback slip 		\
 	  vid_drivers	\
 	  impex_libs bestsnd mp3snd rfsd	\
-	  print_drivers extras taskmax cvttool more_prefs	\
+	  print_drivers extras taskmax more_prefs	\
 	  faxsendtd geosafari slides
 
 ms3     : Installed/Driver/IFS/DOS/MS3
@@ -1684,9 +1692,6 @@ Installed/Driver/Task/TaskMax:			ui text MAKEDRV
 
 bnf : Installed/Driver/Task/BNF
 Installed/Driver/Task/BNF:				ui text MAKEDRV
-
-cvttool	: Installed/Library/FMTools/CvtTool
-Installed/Library/FMTools/CvtTool:		ui convert MAKELIB
 
 faxsendtd	: Installed/Driver/Mailbox/Transport/Faxsendtd
 Installed/Driver/Mailbox/Transport/Faxsendtd:	mailbox faxfile faxctrl ui \
@@ -1819,3 +1824,11 @@ Installed/Library/Breadbox/Impex/VCImpex:	ui impex ansic math meta MAKELIB
 
 vconvert: Installed/Appl/Breadbox/VConvert
 Installed/Appl/Breadbox/VConvert:		ui ansic grobj text math meta MAKEAPPL
+
+# RabeSoft Libraries
+
+rsftool	: Installed/Library/RabeSoft/rsftool
+Installed/Library/RabeSoft/rsftool:		ansic ui MAKELIB
+
+bmptools	: Installed/Library/RabeSoft/bmptools
+Installed/Library/RabeSoft/bmptools:		ansic ui MAKELIB
