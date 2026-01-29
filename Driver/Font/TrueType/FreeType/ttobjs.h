@@ -584,7 +584,6 @@
     TCodeRangeTable  codeRangeTable;
 
     TGraphicsState   GS;
-    TGraphicsState   default_GS;
 
     UShort           cvtSize;   /* the scaled control value table */
     PLong            cvt;
@@ -678,12 +677,10 @@
     Long            scale2;         /* projection vector too..            */
     Bool            cached_metrics; /* the ppem is computed lazily. used  */
                                     /* to trigger computation when needed */
-
+#ifdef DEBUG_INTERPRETER
     Bool            instruction_trap;  /* If True, the interpreter will */
-                                       /* exit after each instruction   */
+#endif                                 /* exit after each instruction   */
 
-    TGraphicsState  default_GS;    /* graphics state resulting from  */
-                                   /* the prep program               */
     Bool            is_composite;  /* ture if the glyph is composite */
 
 #ifdef TT_CONFIG_OPTION_SUPPORT_PEDANTIC_HINTING
