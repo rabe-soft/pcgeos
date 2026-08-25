@@ -1280,6 +1280,69 @@ extern Boolean RS_EXPORT DragGetDragBounds(DragRectStruct *dragRect, Rectangle *
 
 @endc;
 
+/*
+ ***************************************************************************
+ *
+ *	Dithering, Scaling
+
+
+ ----------- neue Routinen oben notieren
+
+ *
+ ***************************************************************************
+ */
+
+/*--------------------- BTCreatePaletteByMedianCut ---------------------
+ * Purpose:	Generate an optimized color palette using the Median Cut algorithm
+ * Parameters:	vmFile, bmpBlock: Bitmap to analyze
+ *		*palette: Return: optimized palette
+ *			  must be able to hold at least 'targetColors' entries
+ *		targetColors: Number of colors in the new palette
+ *			      Usually 16 or 256, but any other value <= 256 is also possible.
+ *		tempFile: VM file for storing the histogram
+ *			  NULL: Use ClipboardFile
+ *		progressTextOptr: Text object to display progress messages
+ *Return:	FALSE: Everything OK
+ *		TRUE:  Error, e.g. out of memory
+ ---------------------------------------------------------------------------*/
+extern Boolean RS_EXPORT BTCreatePaletteByMedianCut(VMFileHandle vmFile, VMBlockHandle bmpBlock,
+		PaletteEntry *palette, int targetColors, VMFileHandle tempFile, optr progressTextOptr);
+
+
+/*--------------------- BTDitherByFloydSteinberg ---------------------
+ * Purpose:	Convert a bitmap to a color-reduced bitmap
+ *		using Floyd-Steinberg dithering
+ * Strategy:	- the source bitmap must be colored (not monochrome)
+ *		- Dithering 16 -> 16/256 and 256 -> 16/256 is allowed becaus the
+ *		  palettes max differ
+ *	        - use a separate routine if the target is monochrome
+ *		- if we have a masked bitmap, mask is preserved
+ *		- use separate loops for masked and unmasked bitmaps
+ *
+ *		For each line do:
+ *		- Convert line to ThreeWordColor values (where r,g,b are OneWordFixed values)
+ *		- dither the line using OneWordFixed arithmetics into one-byte per pixel values
+ *		- for 16 color targtes: convert result back to 4 bit per pixel
+ * Parameters:	srcFile
+ *		srcBlock:    bitmap to be converted
+ *		destFile:    Destination file
+ *		destFormat:  target format: BMF_4BIT, BMF_8BIT or BMF_MONO
+ * 			     all other BMF_bits are ignored
+ *              palette:     Destination palette to be used
+ *			     Pass NULL pointer to use the GEOS standard palette
+ *              palColors    Number of valid colors in the palette
+ *                    	     often 16 or 256; other values are also allowed
+ *	      	defaultIndex:	color index to use if the pixel ist masked out
+ *				(ignored if we have no mask)
+ *              progressText: Text object for displaying progress indicators
+ *                    	      Null if no progress indicator is needed
+ *    Return:	Handle of the new bitmap
+ *           	Zero on error:	- source bitmap is compacted
+ *           		      	- source bitmap is monochrome
+ *				- out of memory
+ * ---------------------------------------------------------------------------*/
+extern VMBlockHandle RS_EXPORT BTDitherByFloydSteinberg(VMFileHandle srcFile, VMBlockHandle srcBitmap, VMFileHandle destFile,
+			int destFormat, PaletteEntry *palette, int palColors, int defaultIndex, optr progressText);
 
 /*
  ***************************************************************************
