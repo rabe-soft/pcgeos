@@ -34,6 +34,7 @@
 // Display progress as dots ....
 void DitherDisplayProgress(optr progressTextObj)  {if (progressTextObj) @call progressTextObj::MSG_VIS_TEXT_APPEND_PTR(".", 0); }
 
+@if 0
 
 /*##########################################################################
 	$ID Dithering using Floyd-Steinberg algorithm
@@ -1247,6 +1248,9 @@ DebugInfo("\tno mask loop - UNTESTED UNTESTED UNTESTED");	// µµ !! untested
 
     return newBitmap;
 }
+
+
+@endif
 
 /*---------------------  ---------------------
  *	Aufgabe:
