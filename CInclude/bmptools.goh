@@ -1332,8 +1332,6 @@ extern Boolean RS_EXPORT BTCreatePaletteByMedianCut(VMFileHandle vmFile, VMBlock
  *			     Pass NULL pointer to use the GEOS standard palette
  *              palColors    Number of valid colors in the palette
  *                    	     often 16 or 256; other values are also allowed
- *	      	defaultIndex:	color index to use if the pixel ist masked out
- *				(ignored if we have no mask)
  *              progressText: Text object for displaying progress indicators
  *                    	      Null if no progress indicator is needed
  *    Return:	Handle of the new bitmap
@@ -1342,7 +1340,7 @@ extern Boolean RS_EXPORT BTCreatePaletteByMedianCut(VMFileHandle vmFile, VMBlock
  *				- out of memory
  * ---------------------------------------------------------------------------*/
 extern VMBlockHandle RS_EXPORT BTDitherByFloydSteinberg(VMFileHandle srcFile, VMBlockHandle srcBitmap, VMFileHandle destFile,
-			int destFormat, PaletteEntry *palette, int palColors, int defaultIndex, optr progressText);
+			int destFormat, PaletteEntry *palette, int palColors, optr progressText);
 
 /*
  ***************************************************************************
