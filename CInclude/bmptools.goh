@@ -1342,6 +1342,39 @@ extern Boolean RS_EXPORT BTCreatePaletteByMedianCut(VMFileHandle vmFile, VMBlock
 extern VMBlockHandle RS_EXPORT BTDitherByFloydSteinberg(VMFileHandle srcFile, VMBlockHandle srcBitmap, VMFileHandle destFile,
 			int destFormat, PaletteEntry *palette, int palColors, optr progressText);
 
+/*--------------------- BTConvertBitmapColorsByReplace ---------------------
+ * Purpose:	Convert a bitmap to a color-reduced bitmap by replacing the pixel colors
+ *		by the neares available color in the target colors
+
+ * Strategy:	- if destFormat is BMF_24BIT or BMF_MONO: use already existing
+ *		  routines: FloydToolConvertTo24Bit() and ToolConvertToMono()
+ *		- depending on the source color depth use different converiosn routines
+ *		  + FloydToolCovertMonoToColor()
+ *		  + ToolConvertIndexBitmapByReplace();
+ *		  + ToolConvert24BitByReplace();
+ *
+ * Note:	This routine handles any combination of source colors an target colors.
+ *		Even cases where color reduction is not possible or necessary — such as converting
+ *		from a 16-color standard palette to a 256-color standard palette — are handled
+ *		correctly. However, the routine is not optimized for these exotic cases.
+ *
+ * Parameters:	srcFile
+ *		srcBlock:    bitmap to be converted
+ *		destFile:    Destination file
+ *		destFormat:  target format: BMF_4BIT, BMF_8BIT, BMF_24BIT or BMF_MONO
+ * 			     all other BMF_bits are ignored
+ *              palette:     Target palette to be used
+ *			     Pass NULL pointer to use the GEOS standard palette
+ *              palColors    Number of valid colors in the palette
+ *                    	     often 16 or 256; other values are also allowed
+ *              progressText: Text object for displaying progress indicators
+ *                    	      Null if no progress indicator is needed
+ *    Return:	Handle of the new bitmap
+ *           	Zero on error:	out of memory
+ *---------------------------------------------------------------------------*/
+extern VMBlockHandle RS_EXPORT BTConvertBitmapColorsByReplace(VMFileHandle srcFile, VMBlockHandle srcBitmap, VMFileHandle destFile,
+			int destFormat, PaletteEntry *palette, int palColors, optr progressText);
+
 /*
  ***************************************************************************
  *

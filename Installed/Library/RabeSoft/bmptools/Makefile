@@ -4,11 +4,12 @@
 # If you edit it, you will lose your changes, should it be regenerated.
 #
 GEODE           = bmptools
-CODE            = access.goc bmptools.goc disptool.goc dither.goc mask.goc\
-                  mediancut.goc moretool.goc transform.goc rtools.goh
+CODE            = access.goc bmptools.goc disptool.goc floyd.goc mask.goc\
+                  mediancut.goc moretool.goc replace.goc transform.goc\
+                  rtools.goh
 UI_TO_RDFS      =
-OBJS            = access.obj bmptools.obj disptool.obj dither.obj mask.obj\
-                  mediancut.obj moretool.obj transform.obj
+OBJS            = access.obj bmptools.obj disptool.obj floyd.obj mask.obj\
+                  mediancut.obj moretool.obj replace.obj transform.obj
 COMMON          =
 MODULES         =
 CMODULES        = Code
