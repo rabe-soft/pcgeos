@@ -106,7 +106,6 @@ byte *srcMaskPtr, *srcDataPtr;
 int bufferSize, destFormat, line;
 byte *destMaskPtr, *destDataPtr;
 
-
     /*
      * get important information, handle special cases and do error check
      */
@@ -861,7 +860,6 @@ word line, maskLen;
 byte *srcPtr, *destPtr;
 BitmapAccessRecord	sbar, dbar;
 
-
     /*
      * create monochrome target bitmap
      */
@@ -879,12 +877,12 @@ BitmapAccessRecord	sbar, dbar;
      */
     if (srcFormat & BMT_MASK) { maskLen = (width+7)/8; }
     			else  { maskLen = 0; }
-    srcPtr = (byte*)BTBitmapLock(srcFile, srcBitmap, &sbar, 0);
+    destPtr = (byte*)BTBitmapLock(destFile, newBmp, &dbar, 0);
     for ( line = 0; line < height; line++) {
-	memset(srcPtr, 0, width + maskLen);
-	srcPtr = (byte*)BTBitmapNext(&sbar, FALSE);
+	memset(destPtr, 0, (width+7)/8 + maskLen);
+	destPtr = (byte*)BTBitmapNext(&dbar, FALSE);
     }
-    BTBitmapUnlock(&sbar, FALSE);
+    BTBitmapUnlock(&dbar, FALSE);
 
 
     /*

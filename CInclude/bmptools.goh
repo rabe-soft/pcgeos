@@ -862,9 +862,13 @@ extern VMBlockHandle RS_EXPORT BTApplyTransparencyColor(VMFileHandle srcFile, VM
  *		green:	    geen value for pixels that were transparent before
  *		blue:	    blue value for pixels that were transparent before
  *
- *	If a 8-bit, 4-bit or monochrome bitmap has been passed
+ *	If a 8-bit, 4-bit bitmap has been passed
  *		redOrIndex: index value for pixels that were transparent before
- *			    for monochrome mitmaps this may be 0 or 1
+ *		green and blue will be ignored
+ *
+ *	If monochrome bitmap has been passed
+ *		redOrIndex: pass 0 (for white) or 1 (for black)
+ *			    this means: do NOT pass C_WHITE or C_BLACK for monochrome bitmaps
  *		green and blue will be ignored
  *
  * 	Strategy:
@@ -914,9 +918,13 @@ extern Boolean RS_EXPORT BTBitmapFillMask(VMFileHandle srcFile, VMBlockHandle bm
  *		green:	    green color value for transparent pixels
  *		blue:	    blue color value for transparent pixels
  *
- *	If a 8-bit, 4-bit or monochrome bitmap has been passed
- *		redOrIndex: index of the color for transparent pixels
- *			    for monochrome mitmaps this may be 0 or 1
+ *	If a 8-bit, 4-bit bitmap has been passed
+ *		redOrIndex: index value for pixels that were transparent before
+ *		green and blue will be ignored
+ *
+ *	If monochrome bitmap has been passed
+ *		redOrIndex: pass 0 (for white) or 1 (for black)
+ *			    this means: do NOT pass C_WHITE or C_BLACK for monochrome bitmaps
  *		green and blue will be ignored
  *
  * Return:	FALSE if everything is ok
@@ -1312,17 +1320,12 @@ extern Boolean RS_EXPORT BTCreatePaletteByMedianCut(VMFileHandle vmFile, VMBlock
 /*--------------------- BTDitherByFloydSteinberg ---------------------
  * Purpose:	Convert a bitmap to a color-reduced bitmap
  *		using Floyd-Steinberg dithering
- * Strategy:	- the source bitmap must be colored (not monochrome)
- *		- Dithering 16 -> 16/256 and 256 -> 16/256 is allowed becaus the
- *		  palettes max differ
- *	        - use a separate routine if the target is monochrome
- *		- if we have a masked bitmap, mask is preserved
- *		- use separate loops for masked and unmasked bitmaps
  *
- *		For each line do:
- *		- Convert line to ThreeWordColor values (where r,g,b are OneWordFixed values)
- *		- dither the line using OneWordFixed arithmetics into one-byte per pixel values
- *		- for 16 color targtes: convert result back to 4 bit per pixel
+ * Note:	This routine handles any combination of source colors an target colors.
+ *		Even cases where color reduction is not possible or necessary — such as converting
+ *		from a 16-color standard palette to a 256-color standard palette — are handled
+ *		correctly. However, the routine is not optimized for these exotic cases.
+ *
  * Parameters:	srcFile
  *		srcBlock:    bitmap to be converted
  *		destFile:    Destination file
@@ -1345,13 +1348,6 @@ extern VMBlockHandle RS_EXPORT BTDitherByFloydSteinberg(VMFileHandle srcFile, VM
 /*--------------------- BTConvertBitmapColorsByReplace ---------------------
  * Purpose:	Convert a bitmap to a color-reduced bitmap by replacing the pixel colors
  *		by the neares available color in the target colors
-
- * Strategy:	- if destFormat is BMF_24BIT or BMF_MONO: use already existing
- *		  routines: FloydToolConvertTo24Bit() and ToolConvertToMono()
- *		- depending on the source color depth use different converiosn routines
- *		  + FloydToolCovertMonoToColor()
- *		  + ToolConvertIndexBitmapByReplace();
- *		  + ToolConvert24BitByReplace();
  *
  * Note:	This routine handles any combination of source colors an target colors.
  *		Even cases where color reduction is not possible or necessary — such as converting
