@@ -292,7 +292,7 @@ void UnlockHistogram(HistoArrayControl *control) {
  ---------------------------------------------------------------------------*/
 extern Boolean RS_EXPORT BTCreatePaletteByMedianCut(VMFileHandle vmFile, VMBlockHandle bmpBlock,
 		PaletteEntry *palette, int targetColors, VMFileHandle tempFile, optr progressTextOptr) {
-int width, height, format;
+int width, height, format, compressed;
 word n;
 HistoArrayReference	histoRef;
 ColorHistogramEntry	entry;
@@ -306,10 +306,10 @@ PaletteEntry *palPtr;
    if (targetColors < 2) targetColors = 2;
 
     /*
-     * Nothing to do for bitmaps with fewer than 256 colors
-     * -> Initialize palette with standard colors
+     * Check if color reduction is required.
+     * If not use standard palette oder source palette
      */
-    format = BTGetMoreBitmapInfos(vmFile, bmpBlock, &width, &height, NULL);
+    format = BTGetMoreBitmapInfos(vmFile, bmpBlock, &width, &height, &compressed);
     switch ( format & (BMT_FORMAT | BMT_PALETTE)) {
     case BMF_MONO:
     case BMF_MONO | BMT_PALETTE:	/* savety - should never happen */
@@ -365,6 +365,15 @@ doMedianCut:
     if (!tempFile ) tempFile = ClipboardGetClipboardFile();
 
     /*
+     * Ensure that the bitmap is not compacted
+     */
+    if ( compressed ) {
+    	bmpBlock = GrUncompactBitmap(vmFile, bmpBlock, tempFile);
+    	vmFile = tempFile;
+    }
+
+
+    /*
      * Initialize HugeArray and HistoArrayReference sructure
      */
     memset(&histoRef, 0, sizeof(HistoArrayReference));
@@ -405,7 +414,11 @@ doMedianCut:
     if (progressTextOptr) ProgressDisplaySpace(progressTextOptr);
     ok = !ExtractPaletteByMedianCut(palette, histoRef, progressTextOptr);
 
+    /*
+     * Destroy histogam and uncompaced copy of the bitmap
+     */
     HugeArrayDestroy(histoRef.vmFile, histoRef.histoArray);
+    if ( compressed ) HugeArrayDestroy(vmFile, bmpBlock);
 
     return ok ? FALSE : TRUE;
 }
