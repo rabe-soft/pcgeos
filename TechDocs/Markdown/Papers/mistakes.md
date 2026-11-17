@@ -4,25 +4,6 @@ This file describes strategies for avoiding common problems that can occur, espe
 programmers who are new to GEOS programming. It was written in the
 1990s and adopted for the freeGEOS project in 2026.
 
-## Contentspalu
-
-- [Common Mistakes of New GEOS Programmers](#common-mistakes-of-new-geos-programmers)
-  - [Contentspalu](#contentspalu)
-  - [1. Use EC Coding to Catch Bugs](#1-use-ec-coding-to-catch-bugs)
-    - [General Memory](#general-memory)
-    - [LMem](#lmem)
-    - [VM Files](#vm-files)
-    - [Miscellaneous](#miscellaneous)
-  - [2. Variables](#2-variables)
-  - [3. Memory](#3-memory)
-  - [4. Pointers](#4-pointers)
-  - [5. Threads](#5-threads)
-  - [6. Files](#6-files)
-  - [7. Using pself, oself and self](#7-using-pself-oself-and-self)
-  - [6. UI and Generic Object Trees](#6-ui-and-generic-object-trees)
-  - [7. Localization](#7-localization)
-  - [8. Graphics](#8-graphics)
-  - [9. Miscellaneous](#9-miscellaneous)
 
 ## 1. Use EC Coding to Catch Bugs
 
@@ -151,7 +132,55 @@ when performing an LMem action on the object block, oself.
 
 ## 4. Pointers
 
-- 
+Understand the difference between pointer variables and pointer parameters.
+
+
+A pointer is a 16-bit value that references a specific address. The type of the pointer determines the type of the variable located at that address.
+int iVal;     /* an integer variable */
+int *iPtr;     /* pointer to an integer variable */
+    iPtr = &iVal;  /* iPtr now contains the address of the integer variable */
+
+A pointer parameter means that the address of a variable is to be passed. The routine `MyRoutine` expects the address of an integer variable.
+Boolean MyRoutine(int *ptrToInt);
+The correct usage is therefore:
+int intVar;
+boolVal = MyRoutine(&intVar); /* Pass the address of the variable intVar */
+
+The following code contains a common error.
+int intVar;
+int *IntVarPtr;      /* Pointer to an integer variable */
+intVarPtr = &intVar;   /* This is correct */
+boolVar = MyRoutine(&intVarPtr);  /* Incorrect. The address of the pointer is passed, not the address of the integer variable */
+
+Remember the trap that C syntax contains. The following lines of code each define an integer pointer `a` and an integer variable `b`.
+int *a, b;
+int b, *a;
+int* a, b;
+
+Ein Zeiger ist ein 16-Bit-Wert, der eine bestimmte Adresse referenziert. Der Typ dess Pointers bestimmt den Typ der variablen, die an dieser Adresse zu finden ist.
+
+int iVal;     /* eine Integer Variable */
+int *iPtr;     /* Zeigger auf eine Integer Variable */
+    iPtr = &iVal;  /* iPtr enthält jetzt die Adresse  der integre Varvalen */
+
+Ein Pointer-Parameter bedeutet, dass die Adresse einer Variablen übergeben werden soll. Die Routine MyRoutine erwartet die Adresse einer Integer Varibalen.
+
+    Boolean MyRoutie(int *ptrToInt);
+    Die korrekte Verwendung ist also:
+    int  intVar;
+    boolVal = MyRoutine(&intVar); /* Adresse der Variablen intVar übergeben */
+
+Der fogende Code enthält einen typischen Fehler.
+
+    int intVar;
+    int *IntVarPtr;      /* Zeiger auf eine Integer variable */
+    intVarPtr = &ibtVAr;   /* das ist ok */
+    boolVar = MyRoutine(&intVarPtr);  /* Falsch. es wird die Adresse des Pointers übergeben, nicht die Adresse der Integr variablen */
+
+Erinnern Sie sich an die Falle, die die C-Syntax enthält. Die folgendenden Codezeilen defineren jeweils einen integer pointer a und eine  integer variable b.
+    int *a, b;
+    int b, *a;
+    int* a, b;
 
 ## 5. Threads
 
