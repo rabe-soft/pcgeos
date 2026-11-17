@@ -7,4 +7,6 @@ An einer exponierten Stelle (im Repository Top-Ordner) gibt es eine Datei mit Co
 
 - MarkDonw files: Code duch Einrücken, nicht Fences
 	4 Spaces für normalen text, 6 Spaces für liste obere Ebene, 8 Spces für 2. Ebene usw.
-        
+
+- Mistakes:_ Pointer ## 4.
+- Mistakes oself, pself, self        

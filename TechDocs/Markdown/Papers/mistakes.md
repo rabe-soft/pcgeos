@@ -4,10 +4,10 @@ This file describes strategies for avoiding common problems that can occur, espe
 programmers who are new to GEOS programming. It was written in the
 1990s and adopted for the freeGEOS project in 2026.
 
-## Contents
+## Contentspalu
 
 - [Common Mistakes of New GEOS Programmers](#common-mistakes-of-new-geos-programmers)
-  - [Contents](#contents)
+  - [Contentspalu](#contentspalu)
   - [1. Use EC Coding to Catch Bugs](#1-use-ec-coding-to-catch-bugs)
     - [General Memory](#general-memory)
     - [LMem](#lmem)
@@ -15,8 +15,10 @@ programmers who are new to GEOS programming. It was written in the
     - [Miscellaneous](#miscellaneous)
   - [2. Variables](#2-variables)
   - [3. Memory](#3-memory)
-  - [4. Threads](#4-threads)
-  - [5. Files](#5-files)
+  - [4. Pointers](#4-pointers)
+  - [5. Threads](#5-threads)
+  - [6. Files](#6-files)
+  - [7. Using pself, oself and self](#7-using-pself-oself-and-self)
   - [6. UI and Generic Object Trees](#6-ui-and-generic-object-trees)
   - [7. Localization](#7-localization)
   - [8. Graphics](#8-graphics)
@@ -123,12 +125,12 @@ This applies to chunks, huge arrays, DB, and so on.
 
 ## 3. Memory
 
-    In a method handler, pself can be invalidated after calling another message or 
-    when performing an LMem action on the object block, oself.
-    
-    Make sure to dereference pself again - with ObjDerefGen or ObjDerefVis - when 
-    using it after one of these invalidating actions. On the other hand, do not 
-    overdo it by dereferencing after every routine call.
+- In a method handler, pself can be invalidated after calling another message or
+when performing an LMem action on the object block, oself.
+ 
+ Make sure to dereference pself again - with ObjDerefGen or ObjDerefVis - when 
+ using it after one of these invalidating actions. On the other hand, do not 
+ overdo it by dereferencing after every routine call.
     
 - Make sure to check for failed memory allocations or locks. This can be determined 
   by checking for NullHandle or a null pointer.
@@ -147,7 +149,11 @@ This applies to chunks, huge arrays, DB, and so on.
   - For all objects that are assigned graphical monikers at runtime, you should keep an eye on the
     resource size.
 
-## 4. Threads
+## 4. Pointers
+
+- 
+
+## 5. Threads
 
 - Do not allow your application's UI thread to make calls to its process thread. **Never!**
   This can result in a deadlock because the process thread must occasionally make calls to the
@@ -158,12 +164,37 @@ This applies to chunks, huge arrays, DB, and so on.
 - Use a semaphore if you want to access the same data structures from different threads.
   Otherwise, another thread might modify the data **while** you are reading it.
 
-## 5. Files
+## 6. Files
 
 Always check whether a file was opened or created successfully. You can simply check whether the
 returned FileHandle is NullHandle.
 
 If the file could not be opened or created and you try to access it, the system will crash.
+
+## 7. Using pself, oself and self
+
+Understand the relationships between **pself**, **oself**, and **self**. 
+
+When an object method is executed, the block containing the instance variables is locked. 
+
+- **pself** is the pointer to the instance variables. It allows access to the instance variables, for example:
+
+      pself->FBI_drag.gstate = GrEditBitmap(global.tempFile, pself->FBI_drag.bmp, NULL);
+
+- **oself** is the **optr** (MemHandle + ChunkHandle) of the object whose method is currently being executed. It allows an object to send messages to itself, for example: 
+
+      gstate = @call oself::MSG_VIS_VUP_CREATE_GSTATE();
+
+- **self** is a hybrid. Depending on the context, the compiler evaluates it as ```oself``` or as ```pself```.
+
+      gstate = @call self::MSG_VIS_VUP_CREATE_GSTATE(); /* same as oself */
+      @self->IDI_speed=0;                               /* same as pself; Note the @ character at the beginning */
+
+- Because **pself** is a pointer, it can become invalid if the object block it points to is moved. This can happen, for example, due to LMem operations, such as creating a new chunk in the object block. In this case, **pself** must be dereferenced again.
+
+      pself = ObjDerefGen(oself);   /* for GenericClass objects */
+      pself = ObjDerefVis(oself);   /* for VisClass objects */
+
 
 ## 6. UI and Generic Object Trees
 
@@ -202,3 +233,6 @@ Understand the difference between a **GString** and a **GState**.
 For standard menus such as File or Edit, use:
 
     ATTR_GEN_INTERACTION_GROUP_TYPE = GIGT_????_MENU
+
+
+[def]: #common-mistakes-of-new-geos-programmers
