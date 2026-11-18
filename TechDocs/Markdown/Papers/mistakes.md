@@ -116,8 +116,8 @@ when performing an LMem action on the object block, oself.
 - Make sure to check for failed memory allocations or locks. This can be determined 
   by checking for NullHandle or a null pointer.
 
-- Do not let resources get too big. Break them into multiple resources. The optimum 
-  for the memory manager is 6k to 8k. Note that every code file creates its own resource.
+- Do not let resources get too big. Break them into multiple resources. Every code file 
+  creates its own resource. The optimum for the memory manager is 6k to 8k. 
 
 - The same applies to object resources. Note that some objects store chunks in their own
   resource at runtime. The most important ones are:
@@ -134,53 +134,37 @@ when performing an LMem action on the object block, oself.
 
 Understand the difference between pointer variables and pointer parameters.
 
+A pointer is a 32-bit value (segment and offset) that references a specific address. The type of the pointer determines the type of the variable located at that address.
 
-A pointer is a 16-bit value that references a specific address. The type of the pointer determines the type of the variable located at that address.
 int iVal;     /* an integer variable */
 int *iPtr;     /* pointer to an integer variable */
     iPtr = &iVal;  /* iPtr now contains the address of the integer variable */
 
 A pointer parameter means that the address of a variable is to be passed. The routine `MyRoutine` expects the address of an integer variable.
-Boolean MyRoutine(int *ptrToInt);
+
+    Boolean MyRoutine(int *ptrToInt);
+
 The correct usage is therefore:
-int intVar;
-boolVal = MyRoutine(&intVar); /* Pass the address of the variable intVar */
+    int intVar;
+    boolVal = MyRoutine(&intVar); /* Pass the address of the variable intVar */
 
 The following code contains a common error.
-int intVar;
-int *IntVarPtr;      /* Pointer to an integer variable */
-intVarPtr = &intVar;   /* This is correct */
-boolVar = MyRoutine(&intVarPtr);  /* Incorrect. The address of the pointer is passed, not the address of the integer variable */
-
-Remember the trap that C syntax contains. The following lines of code each define an integer pointer `a` and an integer variable `b`.
-int *a, b;
-int b, *a;
-int* a, b;
-
-Ein Zeiger ist ein 16-Bit-Wert, der eine bestimmte Adresse referenziert. Der Typ dess Pointers bestimmt den Typ der variablen, die an dieser Adresse zu finden ist.
-
-int iVal;     /* eine Integer Variable */
-int *iPtr;     /* Zeigger auf eine Integer Variable */
-    iPtr = &iVal;  /* iPtr enthält jetzt die Adresse  der integre Varvalen */
-
-Ein Pointer-Parameter bedeutet, dass die Adresse einer Variablen übergeben werden soll. Die Routine MyRoutine erwartet die Adresse einer Integer Varibalen.
-
-    Boolean MyRoutie(int *ptrToInt);
-    Die korrekte Verwendung ist also:
-    int  intVar;
-    boolVal = MyRoutine(&intVar); /* Adresse der Variablen intVar übergeben */
-
-Der fogende Code enthält einen typischen Fehler.
 
     int intVar;
-    int *IntVarPtr;      /* Zeiger auf eine Integer variable */
-    intVarPtr = &ibtVAr;   /* das ist ok */
-    boolVar = MyRoutine(&intVarPtr);  /* Falsch. es wird die Adresse des Pointers übergeben, nicht die Adresse der Integr variablen */
+    int *IntVarPtr;        /* Pointer to an integer variable */
+    intVarPtr = &intVar;   /* This is correct */
 
-Erinnern Sie sich an die Falle, die die C-Syntax enthält. Die folgendenden Codezeilen defineren jeweils einen integer pointer a und eine  integer variable b.
+    boolVar = MyRoutine(&intVarPtr);  /* Incorrect. The address of the pointer is passed, not the address of the integer variable */
+
+    boolVar = MyRoutine(intVarPtr);  /* This is correct, we pass a pointer to the address of the integer variable */
+
+Keep in mind the trap in C syntax when defining pointers. The * refers exclusively to the variable that follows it. The following lines of code each define an integer pointer `a` and an integer variable `b`.
+
     int *a, b;
-    int b, *a;
     int* a, b;
+    int b, *a;
+
+- Resolve all compiler warnings related to pointers. Use explicit type casting only if you are absolutely sure that you know what you are doing.
 
 ## 5. Threads
 
