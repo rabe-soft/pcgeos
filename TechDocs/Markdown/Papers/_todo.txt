@@ -1,3 +1,10 @@
+- MISTAKES.MD - fertig (ohne back/next links am Ende)
+  fejle: DAta Resoure cal data - check it first
+  ist: initialiez strcuture instances??
+
+
+@inlude monikers in global.goh, wenn anderwertig benutzt
+
 Thema Papers
 An einer exponierten Stelle (im Repository Top-Ordner) gibt es eine Datei mit Coding-Tips. Auf diese Datei wird in der Readme.md am Ende verwiesen. Hinein gehören u.a. (alles Sachen, über die ich gestolpert bin):
 - Codefilenamen: Groß/Kleinschreibung ist relevant, z.B. für includete Header, die Extensions (goc und goh) sind klein zu schreiben. 
@@ -7,6 +14,6 @@ An einer exponierten Stelle (im Repository Top-Ordner) gibt es eine Datei mit Co
 
 - MarkDonw files: Code duch Einrücken, nicht Fences
 	4 Spaces für normalen text, 6 Spaces für liste obere Ebene, 8 Spces für 2. Ebene usw.
-
-- Mistakes:_ Pointer ## 4.
-- Mistakes oself, pself, self        
+Code Style 
+- #include vs @include
+- / vs \, ansi vs. Ansi
