@@ -182,6 +182,8 @@ Understand the difference between pointer variables and pointer parameters.
         int* a, b;        /* No, b is not a pointer. */
         int b, *a;
 
+- Resolve all compiler warnings related to pointers. Use explicit type casting only if you are absolutely sure that you know what you are doing.
+
 ## 5. Threads
 
 - Do not allow your application's UI thread to make calls to its process thread. **Never!**
