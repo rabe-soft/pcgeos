@@ -1,64 +1,52 @@
-# Notwendige Änderungen im Code
+# Migration von Programmen zum aktuellen SDK
+
+Das aktuelle PC/GEOS SDK setzt den Watcom C-Compiler voraus während das ältere, 
+DOS-basierte SDK den Borland 4.5 Compiler voraussetzte. Dadurch ergeben sich 
+einige Änderungen, die man am Code vornehmen muss, damit das Programm compilert 
+und läuft.
 
 ## 1. Datei- und Verzeichnisnamen
 
 - Die Dateiendungen `.goc` und `.goh` müssen kleingeschrieben werden.
-- Am besten werden die vollständigen Namen der Code-Dateien kleingeschrieben.
-- Haupt- und Unterordner sollten als Substantive benannt werden, zum Beispiel:
+- Die Name der `.gp` Datei muss vollständig klein geschrieben werden, z.B. `iconed.gp`.
+- Der Dateiname `local.mk` muss vollständig klein geschrieben werden.
+- Hinweise:
+  - Die Groß/kleinschreibung der Namen der Code-Dateien ist egal. Kleinschriebung
+    oder gemischte Schriebweise mit einem Kleinbuchstaben am Anfang sollte
+    bevorzugt werden.
+  - Haupt- und Unterordner sollten als Substantive benannt werden,
+    nur `UI` wird vollständig großgeschrieben:
 
-  ```text
-  Instf/Main
-  Instf/Art
-  ```
-
-- Nur `UI` wird vollständig großgeschrieben:
-
-  ```text
-  Instf/UI
-  ```
+        Instf/Main
+        Instf/Art
+        Instf/UI
 
 ## 2. GP-Datei
 
-- Die Groß- und Kleinschreibung der Ressourcennamen muss angepasst werden.
-- Möglicherweise muss auch die Groß- und Kleinschreibung exportierter Routinen
-  angepasst werden.
+- Die Groß- und Kleinschreibung der Ressourcennamen und der exportierten Klassen
+  muss derjenigen in der UI-Datei entsprechen.
 - Bei Libraries werden exportierte Routinen großgeschrieben.
-- Laut Falk soll kein `platform`-Statement verwendet werden.
-- Falls der Fehler `Programm nicht kompatibel mit BBX 4.1.3` auftritt, kann
-  beispielsweise folgende Angabe verwendet werden:
+- Hinweise:
+  - Ein `platform`-Statement sollte vermieden werden. Verwenden Sie ein `platform` Statement
+    nur, wenn Sie eine Kompatibilität mit früheren GEOS-Versionen wünschen, z.B. mit 
+    Breadbox 4.1.3, die sich auf andere Weise nicht herstellen lässt.
 
-  ```text
-  platform geos21
-  ```
+## 3. local.mk
 
-  Möglicherweise funktioniert auch eine andere passende Plattformangabe.
+-Copyright-Hinweis in `LINKFLAGS`
+  - Der Copyright-Hinweis ist in Anführungszeichen setzen, `\20` sind durch normale
+    Leerzeichen ersetzen.
 
-## 3. `local.mk`
+      LINKFLAGS += -N "Made for freeGEOS"
 
-### Copyright-Hinweis in `LINKFLAGS`
+- C-Compiler Flags `XCCOMFLAGS`
+  - Alle Borland-spezifischen Flags müssen entfernt werden. Insbesondere die
+    Flags `-d` und `-dc` führen zu seltsamen oder irreführenden Compilerfehlern.
+  - Spezielle Compilerflags sind nicht erfoderderlich. Insbesondere die nützlichen 
+    Flags `-zc`  (konstante Daten, z.B. Strings, im Code-Segment ablegen, nicht in der dgroup)
+    und -zu (do not assume stack is in data segment) sind per default gesetzt.
 
-- Den Copyright-Hinweis in Anführungszeichen setzen.
-- `\20` durch normale Leerzeichen ersetzen.
-
-### `XCCOMFLAGS`
-
-`XCCOMFLAGS` auskommentieren, insbesondere die Optionen `-d` und `-dc`.
-
-### Nützliche Compiler-Flags
-
-- **`-zc`** – legt konstante Daten im Code-Segment ab.
-
-  Diese Option ersetzt `-dc`. Strings werden damit im Code-Segment statt in
-  `dgroup` abgelegt.
-
-  > **Hinweis:** Die Option funktioniert. Issue `#165` ist offenbar gelöst.
-
-- **`-zu`** – verwendet `SS != DGROUP`. Der Compiler nimmt also nicht an, dass
-  der Stack im Datensegment liegt.
-
-  Diese Option ersetzt `-WDE` und wird nur für Libraries verwendet.
-
-- **`-1` bis `-6`** – Prozessor-Spezifikation.
+** Problem: ** -zdp wird übergeben.
 
 ## 4. GOC-Dateien
 
